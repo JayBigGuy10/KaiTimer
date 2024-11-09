@@ -3,32 +3,29 @@ package com.jaybigguy.kaitimer
 import androidx.compose.animation.core.animateFloatAsState
 import androidx.compose.foundation.ExperimentalFoundationApi
 import androidx.compose.foundation.background
+import androidx.compose.foundation.clickable
 import androidx.compose.foundation.layout.Arrangement
 import androidx.compose.foundation.layout.Box
-import androidx.compose.foundation.layout.BoxWithConstraints
 import androidx.compose.foundation.layout.Column
 import androidx.compose.foundation.layout.Row
 import androidx.compose.foundation.layout.Spacer
 import androidx.compose.foundation.layout.fillMaxHeight
-import androidx.compose.foundation.layout.fillMaxSize
 import androidx.compose.foundation.layout.fillMaxWidth
 import androidx.compose.foundation.layout.height
 import androidx.compose.foundation.layout.padding
-import androidx.compose.foundation.layout.size
 import androidx.compose.foundation.layout.width
+import androidx.compose.foundation.layout.wrapContentHeight
+import androidx.compose.foundation.layout.wrapContentWidth
 import androidx.compose.foundation.shape.RoundedCornerShape
 import androidx.compose.material.icons.Icons
 import androidx.compose.material.icons.filled.Add
-import androidx.compose.material.icons.outlined.FavoriteBorder
-import androidx.compose.material.icons.outlined.Share
-import androidx.compose.material3.AssistChip
-import androidx.compose.material3.AssistChipDefaults
+import androidx.compose.material.icons.filled.PlayArrow
 import androidx.compose.material3.Button
+import androidx.compose.material3.ButtonDefaults
 import androidx.compose.material3.Card
 import androidx.compose.material3.CardDefaults
 import androidx.compose.material3.ExperimentalMaterial3Api
 import androidx.compose.material3.Icon
-import androidx.compose.material3.LinearProgressIndicator
 import androidx.compose.material3.MaterialTheme
 import androidx.compose.material3.SmallFloatingActionButton
 import androidx.compose.material3.Text
@@ -36,11 +33,12 @@ import androidx.compose.runtime.Composable
 import androidx.compose.ui.Alignment
 import androidx.compose.ui.Modifier
 import androidx.compose.ui.draw.clip
-import androidx.compose.ui.draw.rotate
-import androidx.compose.ui.graphics.graphicsLayer
+import androidx.compose.ui.res.painterResource
 import androidx.compose.ui.tooling.preview.Preview
 import androidx.compose.ui.unit.dp
 import com.jaybigguy.kaitimer.ui.theme.KaitimerTheme
+import java.util.Timer
+import kotlin.time.Duration.Companion.minutes
 
 @ExperimentalMaterial3Api
 @Composable
@@ -70,14 +68,33 @@ fun ImageCard(
             )
             Spacer(modifier = Modifier.height(8.dp))
 
-            Row {
-                VerticalProgress(progress = 0.3f)
+            Row() {
+                VerticalProgress(progress = 0.35f)
+
                 Spacer(modifier = Modifier.width(8.dp))
-                Column {
-                    Text(text = "Hi")
+
+                Column(verticalArrangement = Arrangement.spacedBy(8.dp)) {
+                    TimerChip(5.minutes)
+
+                    TimerChip(12.5.minutes)
+
                 }
             }
 
+//            Spacer(modifier = Modifier.height(8.dp))
+//
+//            Row(
+//                modifier = Modifier.fillMaxWidth(),
+//                horizontalArrangement = Arrangement.End
+//            ) {
+//                SmallFloatingActionButton(
+//                    onClick = { /**/ },
+//                    containerColor = MaterialTheme.colorScheme.secondaryContainer,
+//                    contentColor = MaterialTheme.colorScheme.secondary
+//                ) {
+//                    Icon(Icons.Filled.Add, "Small floating action button.")
+//                }
+//            }
 
 //            Box(
 //                modifier = Modifier
@@ -113,19 +130,6 @@ fun ImageCard(
 //                Text(text = "Hi", color = MaterialTheme.colorScheme.inversePrimary)
 //            }
 
-            Spacer(modifier = Modifier.height(8.dp))
-            Row(
-                modifier = Modifier.fillMaxWidth(),
-                horizontalArrangement = Arrangement.End
-            ) {
-                SmallFloatingActionButton(
-                    onClick = { /**/ },
-                    containerColor = MaterialTheme.colorScheme.secondaryContainer,
-                    contentColor = MaterialTheme.colorScheme.secondary
-                ) {
-                    Icon(Icons.Filled.Add, "Small floating action button.")
-                }
-
 
 //                AssistChip(
 //                    onClick = { },
@@ -157,7 +161,7 @@ fun ImageCard(
 //                        Text(text = "Share with others")
 //                    }
 //                )
-            }
+
         }
     }
 }
@@ -187,15 +191,15 @@ fun VerticalProgress(
         modifier = modifier
             .clip(RoundedCornerShape(12.dp))
             .background(MaterialTheme.colorScheme.background)
-            .width(80.dp)
+            .width(100.dp)
     ) {
         Box(
             modifier = Modifier
-                .weight(1 - mProgress.value)
+                .weight(if ((1f - mProgress.value) == 0f) 0.0001f else 1 - mProgress.value)
                 .fillMaxWidth(),
             contentAlignment = Alignment.BottomCenter
-        ){
-            Text(text = "Hi", color = MaterialTheme.colorScheme.onBackground)
+        ) {
+            Text(text = "MM:ss", color = MaterialTheme.colorScheme.onBackground)
         }
         Box(
             modifier = Modifier
