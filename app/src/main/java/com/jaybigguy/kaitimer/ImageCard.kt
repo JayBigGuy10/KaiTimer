@@ -16,6 +16,7 @@ import androidx.compose.foundation.layout.padding
 import androidx.compose.foundation.layout.width
 import androidx.compose.foundation.layout.wrapContentHeight
 import androidx.compose.foundation.layout.wrapContentWidth
+import androidx.compose.foundation.lazy.LazyColumn
 import androidx.compose.foundation.shape.RoundedCornerShape
 import androidx.compose.material.icons.Icons
 import androidx.compose.material.icons.filled.Add
@@ -39,6 +40,7 @@ import androidx.compose.ui.unit.dp
 import com.jaybigguy.kaitimer.ui.theme.KaitimerTheme
 import java.util.Timer
 import kotlin.time.Duration.Companion.minutes
+import kotlin.time.Duration.Companion.seconds
 
 @ExperimentalMaterial3Api
 @Composable
@@ -47,6 +49,9 @@ fun ImageCard(
     description: String,
     modifier: Modifier = Modifier
 ) {
+
+    val tvm = TimerViewModel(30.seconds)
+
     Card(
         modifier = modifier,
         colors = CardDefaults.cardColors(
@@ -69,16 +74,24 @@ fun ImageCard(
             Spacer(modifier = Modifier.height(8.dp))
 
             Row() {
+
                 VerticalProgress(progress = 0.35f)
 
                 Spacer(modifier = Modifier.width(8.dp))
 
                 Column(verticalArrangement = Arrangement.spacedBy(8.dp)) {
-                    TimerChip(5.minutes)
+                    TimerChip(tvm)
 
-                    TimerChip(12.5.minutes)
+                    TimerChip(TimerViewModel(5.minutes))
 
                 }
+
+//                LazyColumn {
+//                    items(timeset) { timeElement ->
+//                        TimerChip(duration = )
+//                    }
+//                }
+
             }
 
 //            Spacer(modifier = Modifier.height(8.dp))
@@ -169,7 +182,7 @@ fun ImageCard(
 @OptIn(ExperimentalMaterial3Api::class, ExperimentalFoundationApi::class)
 @Preview(showBackground = true)
 @Composable
-fun preview() {
+fun Preview() {
     KaitimerTheme {
         ImageCard(
             title = "Page: ",
@@ -177,38 +190,6 @@ fun preview() {
             modifier = Modifier
                 .padding(16.dp)
                 .fillMaxHeight(0.9f)
-        )
-    }
-}
-
-@Composable
-fun VerticalProgress(
-    progress: Float,
-    modifier: Modifier = Modifier
-) {
-    val mProgress = animateFloatAsState(targetValue = progress)
-    Column(
-        modifier = modifier
-            .clip(RoundedCornerShape(12.dp))
-            .background(MaterialTheme.colorScheme.background)
-            .width(100.dp)
-    ) {
-        Box(
-            modifier = Modifier
-                .weight(if ((1f - mProgress.value) == 0f) 0.0001f else 1 - mProgress.value)
-                .fillMaxWidth(),
-            contentAlignment = Alignment.BottomCenter
-        ) {
-            Text(text = "MM:ss", color = MaterialTheme.colorScheme.onBackground)
-        }
-        Box(
-            modifier = Modifier
-                .clip(RoundedCornerShape(12.dp))
-                .weight(mProgress.value)
-                .fillMaxWidth()
-                .background(
-                    MaterialTheme.colorScheme.primary
-                )
         )
     }
 }
