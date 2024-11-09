@@ -8,9 +8,7 @@ import androidx.lifecycle.viewModelScope
 import kotlinx.coroutines.Job
 import kotlinx.coroutines.delay
 import kotlinx.coroutines.launch
-import java.util.Timer
 import kotlin.time.Duration
-import kotlin.time.Duration.Companion.minutes
 import kotlin.time.Duration.Companion.seconds
 import kotlin.time.DurationUnit
 import kotlin.time.toDuration
@@ -24,6 +22,10 @@ class TimerViewModel(givenDuration: Duration) : ViewModel() {
     val time: LiveData<Duration> = _time
 
     //amount of time the timer is going to run for before alarming
+    private val _remaining: MutableLiveData<Duration> = MutableLiveData(0.seconds)
+    val remaining: LiveData<Duration> = _remaining
+
+    //amount of time the timer is going to run for before alarming
     private val _duration: MutableLiveData<Duration> = MutableLiveData(0.seconds)
     val duration: LiveData<Duration> = _duration
 
@@ -31,7 +33,13 @@ class TimerViewModel(givenDuration: Duration) : ViewModel() {
     private val _state = MutableLiveData(TimerState.INITIAL)
     val state: LiveData<TimerState> = _state
 
+    //when the timer was started
     var timeStarted: Long = 0
+
+    //percentage done
+    private val _progress: MutableLiveData<Float> = MutableLiveData(0.5f)
+    val progress: LiveData<Float> = _progress
+
 
     private var timerJob: Job? = null
 
@@ -63,12 +71,13 @@ class TimerViewModel(givenDuration: Duration) : ViewModel() {
 
         timerJob = viewModelScope.launch {
             while (true) {
-                delay(500)
+                delay(10)
                 onTick()
             }
         }
     }
 
+    //TODO Optimise perf (only the progress float needs 10ms, rest are fine at 1 sec)
     fun onTick(){
         val currentClockTime = System.currentTimeMillis()
 
@@ -80,7 +89,13 @@ class TimerViewModel(givenDuration: Duration) : ViewModel() {
             _state.value = TimerState.COUNTING
         }
 
-        _time.value = (currentClockTime - timeStarted).toDuration(DurationUnit.MILLISECONDS)
+        val elapsed = (currentClockTime - timeStarted)
+
+        _progress.value = elapsed.toFloat()/durationMillis.toFloat()
+
+        _time.value = elapsed.toDuration(DurationUnit.MILLISECONDS)
+
+        _remaining.value = (durationMillis - (elapsed)).toDuration(DurationUnit.MILLISECONDS)
 
     }
 

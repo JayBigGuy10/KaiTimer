@@ -75,7 +75,7 @@ fun ImageCard(
 
             Row() {
 
-                VerticalProgress(progress = 0.35f)
+                VerticalProgress(tvm)
 
                 Spacer(modifier = Modifier.width(8.dp))
 
@@ -182,7 +182,7 @@ fun ImageCard(
 @OptIn(ExperimentalMaterial3Api::class, ExperimentalFoundationApi::class)
 @Preview(showBackground = true)
 @Composable
-fun Preview() {
+fun PreviewImageCard() {
     KaitimerTheme {
         ImageCard(
             title = "Page: ",
