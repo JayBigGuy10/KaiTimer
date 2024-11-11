@@ -45,7 +45,7 @@ fun VerticalProgress(
         Box(
             modifier = Modifier
                 //.weight(if ((1f - mProgress.value) == 0f) 0.0001f else if ((1f - mProgress.value) == 1f) 0.9999f else 1 - mProgress.value)
-                .weight((1f-mProgress.value).coerceIn(0.0001f,0.9999f))
+                .weight((mProgress.value).coerceIn(0.0001f,0.9999f))
                 .fillMaxWidth(),
             contentAlignment = Alignment.BottomCenter
         ) {
@@ -54,7 +54,7 @@ fun VerticalProgress(
         Box(
             modifier = Modifier
                 .clip(RoundedCornerShape(12.dp))
-                .weight(mProgress.value.coerceIn(0.0001f,0.9999f))
+                .weight((1f-mProgress.value).coerceIn(0.0001f,0.9999f))
                 .fillMaxWidth()
                 .background(
                     MaterialTheme.colorScheme.primary

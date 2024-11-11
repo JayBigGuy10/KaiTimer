@@ -52,8 +52,11 @@ fun TimerChip(tvm: TimerViewModel){
 
     var showDialog by remember { mutableStateOf(false) }
 
-    if (showDialog){
-        TimerChipDialog(onConfirm = {showDialog = false}) {
+    if (showDialog && state == TimerState.INITIAL){
+        TimerChipDialog(onConfirm = { timePickerState ->
+            tvm.setDuration(timePickerStateToDuration(timePickerState))
+            showDialog = false
+        }) {
             showDialog = false
         }
     }

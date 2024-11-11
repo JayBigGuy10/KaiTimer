@@ -40,9 +40,7 @@ class TimerViewModel(givenDuration: Duration) : ViewModel() {
     private val _progress: MutableLiveData<Float> = MutableLiveData(0.5f)
     val progress: LiveData<Float> = _progress
 
-
     private var timerJob: Job? = null
-
 
     init {
         _duration.value = givenDuration
@@ -52,18 +50,18 @@ class TimerViewModel(givenDuration: Duration) : ViewModel() {
         _time.value = newTime
     }
 
-    fun onTimerStart(time: Long) {
-        timer = object : CountDownTimer(time, 500) {
-            override fun onTick(millisUntilFinished: Long) {
-
-            }
-
-            override fun onFinish() {
-                _state.value = TimerState.ALARMING_FINISH
-            }
-        }
-        timer.start()
-    }
+//    fun onTimerStart(time: Long) {
+//        timer = object : CountDownTimer(time, 500) {
+//            override fun onTick(millisUntilFinished: Long) {
+//
+//            }
+//
+//            override fun onFinish() {
+//                _state.value = TimerState.ALARMING_FINISH
+//            }
+//        }
+//        timer.start()
+//    }
 
     fun start(){
         _state.value = TimerState.COUNTING
@@ -97,6 +95,10 @@ class TimerViewModel(givenDuration: Duration) : ViewModel() {
 
         _remaining.value = (durationMillis - (elapsed)).toDuration(DurationUnit.MILLISECONDS)
 
+    }
+
+    fun setDuration(newDuration: Duration){
+        _duration.value = newDuration
     }
 
     //call while running
