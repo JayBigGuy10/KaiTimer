@@ -26,7 +26,7 @@ import kotlin.time.Duration.Companion.minutes
 @SuppressLint("DefaultLocale")
 @Composable
 fun VerticalProgress(
-    tvm: TimerViewModel,
+    tvm: TimerChipModel,
     modifier: Modifier = Modifier
 ) {
 
@@ -67,6 +67,6 @@ fun VerticalProgress(
 @Composable
 fun PreviewVerticalProgress() {
     KaitimerTheme {
-        VerticalProgress(TimerViewModel(1.5.minutes))
+        VerticalProgress(TimerChipModel(1.5.minutes))
     }
 }

@@ -40,7 +40,7 @@ import kotlin.time.Duration.Companion.minutes
 @OptIn(ExperimentalMaterial3Api::class)
 @SuppressLint("DefaultLocale")
 @Composable
-fun TimerChip(tvm: TimerViewModel){
+fun TimerChip(tvm: TimerChipModel){
 
     //val state: MutableState<Int> = rememberSaveable { mutableStateOf(1) }
 
@@ -123,6 +123,6 @@ fun TimerChip(tvm: TimerViewModel){
 @Composable
 fun PreviewTimerChip() {
     KaitimerTheme {
-        TimerChip(TimerViewModel(1.5.minutes))
+        TimerChip(TimerChipModel(1.5.minutes))
     }
 }

@@ -47,131 +47,140 @@ import androidx.compose.foundation.layout.fillMaxSize
 import androidx.compose.foundation.layout.size
 import androidx.compose.runtime.Composable
 import androidx.compose.ui.tooling.preview.Preview
+import androidx.lifecycle.ViewModelProvider
 
 class MainActivity : ComponentActivity() {
+
+    private lateinit var viewModel: MainActivityModel
+
     @OptIn(ExperimentalMaterial3Api::class, ExperimentalFoundationApi::class)
     override fun onCreate(savedInstanceState: Bundle?) {
         super.onCreate(savedInstanceState)
         enableEdgeToEdge()
+
+        viewModel = ViewModelProvider(this)[MainActivityModel::class.java]
+
         setContent {
             InnerApp()
         }
     }
-}
 
-@OptIn(ExperimentalMaterial3Api::class, ExperimentalFoundationApi::class)
-@Preview(showBackground = true)
-@Composable
-fun InnerApp() {
-    KaitimerTheme {
-        Surface (modifier=Modifier.fillMaxSize(), color= MaterialTheme.colorScheme.background) {
 
-            val drawerState = rememberDrawerState(initialValue = DrawerValue.Closed)
-            val scope = rememberCoroutineScope()
+    @OptIn(ExperimentalMaterial3Api::class, ExperimentalFoundationApi::class)
+    @Preview(showBackground = true)
+    @Composable
+    fun InnerApp() {
+        KaitimerTheme {
+            Surface (modifier=Modifier.fillMaxSize(), color= MaterialTheme.colorScheme.background) {
 
-            ModalNavigationDrawer(
-                drawerContent = {
-                    ModalDrawerSheet {
-                        Text("Drawer title", modifier = Modifier.padding(16.dp))
-                        HorizontalDivider()
-                        NavigationDrawerItem(
-                            label = { Text(text = "Drawer Item") },
-                            selected = false,
-                            onClick = { /*TODO*/ }
-                        )
-                        // ...other drawer items
-                    }
-                },
-                drawerState = drawerState,
-                gesturesEnabled = drawerState.isOpen
-            ) {
-                Scaffold(
-                    floatingActionButton = {
-                        FloatingActionButton(onClick = {}) {
-                            Icon(
-                                imageVector = Icons.Default.Add,
-                                contentDescription = null,
-                                tint = MaterialTheme.colorScheme.onPrimaryContainer
+                val drawerState = rememberDrawerState(initialValue = DrawerValue.Closed)
+                val scope = rememberCoroutineScope()
+
+                ModalNavigationDrawer(
+                    drawerContent = {
+                        ModalDrawerSheet {
+                            Text("Drawer title", modifier = Modifier.padding(16.dp))
+                            HorizontalDivider()
+                            NavigationDrawerItem(
+                                label = { Text(text = "Drawer Item") },
+                                selected = false,
+                                onClick = { /*TODO*/ }
                             )
+                            // ...other drawer items
                         }
                     },
-                    topBar = {
-                        TopAppBar(
-                            title = {
-                                Text(text = "Chicken & Rice")
-                            },
-                            navigationIcon = {
-
-                                IconButton(onClick = {
-                                    scope.launch {
-                                        drawerState.open()
-                                    }
-                                }) {
-                                    Icon(
-                                        imageVector = Icons.Default.Menu,
-                                        contentDescription = "Menu"
-                                    )
-                                }
-                            },
-                            colors = TopAppBarDefaults.topAppBarColors(
-                                containerColor = MaterialTheme.colorScheme.surfaceVariant,
-                                titleContentColor = MaterialTheme.colorScheme.onSurfaceVariant
-                            ),
-                            actions = {
-                                IconButton(onClick = {
-                                    scope.launch {
-                                        drawerState.open()
-                                    }
-                                }) {
-                                    Icon(
-                                        imageVector = Icons.Default.MoreVert,
-                                        contentDescription = "Menu"
-                                    )
-                                }
-                            }
-                        )
-                    }
-                ) { innerPadding ->
-                    // Display 10 items
-                    val pagerState = rememberPagerState(pageCount = {
-                        4
-                    })
-
-                    Column(
-                        modifier = Modifier
-                            .fillMaxSize()
-                            .padding(innerPadding)  // Use padding provided by Scaffold
-                    ) {
-
-                        HorizontalPager(state = pagerState) { page ->
-                            ImageCard(
-                                title = "Page: $page",
-                                description = "Bacon ipsum dolor amet pork shankle beef andouille ball tip. Meatball corned beef swine, strip steak bacon jerky doner tongue biltong pork loin drumstick sausage hamburger burgdoggen.",
-                                modifier = Modifier.padding(16.dp).fillMaxHeight(0.9f)
-                            )
-                        }
-
-                        Row(
-                            modifier = Modifier
-                                .wrapContentHeight()
-                                .fillMaxWidth()
-                                .padding(bottom = 8.dp),
-                            horizontalArrangement = Arrangement.Center,
-                            verticalAlignment = Alignment.Bottom,
-                        ) {
-                            repeat(pagerState.pageCount) { iteration ->
-                                val color = if (pagerState.currentPage == iteration) MaterialTheme.colorScheme.primary else MaterialTheme.colorScheme.secondary
-                                Box(
-                                    modifier = Modifier
-                                        .padding(2.dp)
-                                        //.clip(CircleShape)
-                                        .background(color)
-                                        .size(16.dp)
+                    drawerState = drawerState,
+                    gesturesEnabled = drawerState.isOpen
+                ) {
+                    Scaffold(
+                        floatingActionButton = {
+                            FloatingActionButton(onClick = {
+                                viewModel.timerCards.add(TimerCardModel())
+                            }) {
+                                Icon(
+                                    imageVector = Icons.Default.Add,
+                                    contentDescription = null,
+                                    tint = MaterialTheme.colorScheme.onPrimaryContainer
                                 )
                             }
-                        }
-                    }
+                        },
+                        topBar = {
+                            TopAppBar(
+                                title = {
+                                    Text(text = "Chicken & Rice")
+                                },
+                                navigationIcon = {
 
+                                    IconButton(onClick = {
+                                        scope.launch {
+                                            drawerState.open()
+                                        }
+                                    }) {
+                                        Icon(
+                                            imageVector = Icons.Default.Menu,
+                                            contentDescription = "Menu"
+                                        )
+                                    }
+                                },
+                                colors = TopAppBarDefaults.topAppBarColors(
+                                    containerColor = MaterialTheme.colorScheme.surfaceVariant,
+                                    titleContentColor = MaterialTheme.colorScheme.onSurfaceVariant
+                                ),
+                                actions = {
+                                    IconButton(onClick = {
+                                        scope.launch {
+                                            drawerState.open()
+                                        }
+                                    }) {
+                                        Icon(
+                                            imageVector = Icons.Default.MoreVert,
+                                            contentDescription = "Menu"
+                                        )
+                                    }
+                                }
+                            )
+                        }
+                    ) { innerPadding ->
+                        // Display 10 items
+                        val pagerState = rememberPagerState(pageCount = {viewModel.timerCards.count()})
+
+                        Column(
+                            modifier = Modifier
+                                .fillMaxSize()
+                                .padding(innerPadding)  // Use padding provided by Scaffold
+                        ) {
+
+                            HorizontalPager(state = pagerState) { page ->
+                                TimerCard(
+//                                title = "Page: $page",
+//                                description = "Bacon ipsum dolor amet pork shankle beef andouille ball tip. Meatball corned beef swine, strip steak bacon jerky doner tongue biltong pork loin drumstick sausage hamburger burgdoggen.",
+                                    viewModel.timerCards[page],
+                                    modifier = Modifier.padding(16.dp).fillMaxHeight(0.9f)
+                                )
+                            }
+
+                            Row(
+                                modifier = Modifier
+                                    .wrapContentHeight()
+                                    .fillMaxWidth()
+                                    .padding(bottom = 8.dp),
+                                horizontalArrangement = Arrangement.Center,
+                                verticalAlignment = Alignment.Bottom,
+                            ) {
+                                repeat(pagerState.pageCount) { iteration ->
+                                    val color = if (pagerState.currentPage == iteration) MaterialTheme.colorScheme.primary else MaterialTheme.colorScheme.secondary
+                                    Box(
+                                        modifier = Modifier
+                                            .padding(2.dp)
+                                            //.clip(CircleShape)
+                                            .background(color)
+                                            .size(16.dp)
+                                    )
+                                }
+                            }
+                        }
+
+                    }
                 }
             }
         }

@@ -8,12 +8,13 @@ import androidx.lifecycle.viewModelScope
 import kotlinx.coroutines.Job
 import kotlinx.coroutines.delay
 import kotlinx.coroutines.launch
+import java.util.Timer
 import kotlin.time.Duration
 import kotlin.time.Duration.Companion.seconds
 import kotlin.time.DurationUnit
 import kotlin.time.toDuration
 
-class TimerViewModel(givenDuration: Duration) : ViewModel() {
+class TimerChipModel(givenDuration: Duration) {//: ViewModel() {
 
     private lateinit var timer: CountDownTimer
 
@@ -40,15 +41,15 @@ class TimerViewModel(givenDuration: Duration) : ViewModel() {
     private val _progress: MutableLiveData<Float> = MutableLiveData(0.5f)
     val progress: LiveData<Float> = _progress
 
-    private var timerJob: Job? = null
+    //private var timerJob: Job? = null
 
     init {
         _duration.value = givenDuration
     }
 
-    fun onTimeChange(newTime: Duration) {
-        _time.value = newTime
-    }
+//    fun onTimeChange(newTime: Duration) {
+//        _time.value = newTime
+//    }
 
 //    fun onTimerStart(time: Long) {
 //        timer = object : CountDownTimer(time, 500) {
@@ -67,34 +68,37 @@ class TimerViewModel(givenDuration: Duration) : ViewModel() {
         _state.value = TimerState.COUNTING
         timeStarted = System.currentTimeMillis()
 
-        timerJob = viewModelScope.launch {
-            while (true) {
-                delay(10)
-                onTick()
-            }
-        }
+//        timerJob = viewModelScope.launch {
+//            while (true) {
+//                delay(10)
+//                onTick()
+//            }
+//        }
     }
 
     //TODO Optimise perf (only the progress float needs 10ms, rest are fine at 1 sec)
     fun onTick(){
-        val currentClockTime = System.currentTimeMillis()
 
-        val durationMillis: Long = _duration.value?.inWholeMilliseconds ?: Long.MIN_VALUE
+        if (_state.value != TimerState.INITIAL) {
 
-        if (currentClockTime > (durationMillis + timeStarted)){
-            _state.value = TimerState.ALARMING_FINISH
-        } else if (_state.value == TimerState.ALARMING_FINISH){
-            _state.value = TimerState.COUNTING
+            val currentClockTime = System.currentTimeMillis()
+
+            val durationMillis: Long = _duration.value?.inWholeMilliseconds ?: Long.MIN_VALUE
+
+            if (currentClockTime > (durationMillis + timeStarted)) {
+                _state.value = TimerState.ALARMING_FINISH
+            } else if (_state.value == TimerState.ALARMING_FINISH) {
+                _state.value = TimerState.COUNTING
+            }
+
+            val elapsed = (currentClockTime - timeStarted)
+
+            _progress.value = elapsed.toFloat() / durationMillis.toFloat()
+
+            _time.value = elapsed.toDuration(DurationUnit.MILLISECONDS)
+
+            _remaining.value = (durationMillis - (elapsed)).toDuration(DurationUnit.MILLISECONDS)
         }
-
-        val elapsed = (currentClockTime - timeStarted)
-
-        _progress.value = elapsed.toFloat()/durationMillis.toFloat()
-
-        _time.value = elapsed.toDuration(DurationUnit.MILLISECONDS)
-
-        _remaining.value = (durationMillis - (elapsed)).toDuration(DurationUnit.MILLISECONDS)
-
     }
 
     fun setDuration(newDuration: Duration){
